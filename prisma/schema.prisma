@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id        String   @id @default(uuid())
+  nom       String
+  prenom    String?
+  pin       String
+  telephone String   @unique
+  points    Int      @default(10)
+  flammes   Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt     DateTime @default(now()) @map("expires_at")
+
+  
+
+
+  // Relations
+  tontines             Tontine[]       @relation("TontineCreator")
+  participants         Participant[]
+  cyclesBeneficiaire   Cycle[]         @relation("CycleBeneficiaire")
+  transactionsEnvoyees Transaction[]   @relation("TransactionExpediteur")
+  transactionsRecues   Transaction[]   @relation("TransactionBeneficiaire")
+  notifications        Notifications[]
+  cotisations          Cotisation[] 
+}
+
+model Tontine {
+  id                 String   @id @default(uuid())
+  nom                String
+  montant            Int
+  cagnotte           Int      @default(0)
+  frequence          String   @db.VarChar(20)
+  jour               String? // Optionnel (pour hebdomadaire)
+  nombreParticipants Int      @default(0)
+  amende             Int
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  // Relations
+  createdBy    String
+  createur     Utilisateur   @relation("TontineCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  participants Participant[]
+  cycles       Cycle[]
+  cotisations  Cotisation[]
+  transactions Transaction[]
+}
+
+model Participant {
+  id            String   @id @default(uuid())
+  utilisateurId String
+  tontineId     String
+  ordreSouhaite Int?
+  statut        String   @default("actif")
+  flammes       Int      @default(0)
+  retards       Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  tontine     Tontine     @relation(fields: [tontineId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, tontineId])
+}
+
+model Cycle {
+  id             String    @id @default(uuid())
+  tontineId      String
+  beneficiaireId String
+  ordre          Int
+  statut         String    @default("en_cours")
+  dateDebut      DateTime  @default(now()) @map("date_debut")
+  dateFin        DateTime?
+
+  // Relations
+  tontine      Tontine       @relation(fields: [tontineId], references: [id], onDelete: Cascade)
+  beneficiaire Utilisateur   @relation("CycleBeneficiaire", fields: [beneficiaireId], references: [id], onDelete: Cascade)
+  cotisations  Cotisation[]
+  transactions Transaction[]
+}
+
+model Cotisation {
+  id              String    @id @default(uuid())
+  utilisateurId   String
+  tontineId       String
+  cycleId         String
+  montant         Int
+  statut          String    @default("en_attente")
+  methodePaiement String?   @map("methode_paiement")
+  datePaiement    DateTime?
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  tontine     Tontine     @relation(fields: [tontineId], references: [id], onDelete: Cascade)
+  cycle       Cycle       @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+  tontineId       String
+  cycleId         String
+  expediteurId    String
+  beneficiaireId  String
+  montant         Int
+  motif           String?
+  statut          String   @default("effectué")
+  dateTransaction DateTime @default(now()) @map("date_transaction")
+
+  // Relations
+  tontine      Tontine     @relation(fields: [tontineId], references: [id], onDelete: Cascade)
+  cycle        Cycle       @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  expediteur   Utilisateur @relation("TransactionExpediteur", fields: [expediteurId], references: [id], onDelete: Cascade)
+  beneficiaire Utilisateur @relation("TransactionBeneficiaire", fields: [beneficiaireId], references: [id], onDelete: Cascade)
+}
+
+model Notifications {
+  id            String   @id @default(uuid())
+  utilisateurId String
+  message       String
+  statut        String   @default("non_lu")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
