@@ -37,14 +37,20 @@ export const generateOtp = async (telephone: string) => {
     });
     const otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
 
-    await prisma.utilisateur.upsert({
-        where: { telephone },
-        update: { pin: otp, expiresAt: otpExpiration },
-        create: { telephone, pin: otp, expiresAt: otpExpiration, nom: "Default Name" },
-    });
+    const user = await prisma.utilisateur.findUnique({ where: { telephone } });
+    
+    if (user) {
+        await prisma.utilisateur.update({
+            where: { telephone },
+            data: { pin: otp, expiresAt: otpExpiration },
+        });
+    } else {
+        console.log(`Utilisateur non trouvé. Aucun utilisateur créé.`);
+    }
 
     return otp;
 };
+
 
 export const verifyOtp = async (telephone: string, code: string) => {
     const user = await prisma.utilisateur.findUnique({

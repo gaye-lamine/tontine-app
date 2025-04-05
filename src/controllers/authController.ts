@@ -1,4 +1,3 @@
-// controllers/authController.ts
 
 import { Request, Response } from "express";
 import {
@@ -66,6 +65,7 @@ export const verifyOtpController = async (req: Request, res: Response): Promise<
     }
 };
 
+
 export const register = async (req: Request, res: Response): Promise<void> => {
     const { telephone, nom, prenom, pin } = req.body;
 
@@ -73,7 +73,15 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         const user = await createUser(telephone, nom, prenom, pin);
         res.status(201).json({ status: true, message: "Utilisateur créé.", data: { user } });
     } catch (error) {
-        const errorMessage = (error as Error).message;
-        res.status(500).json({ status: false, message: errorMessage, data: null });
+        if ((error as any).code === 'P2002' && (error as any).meta.target.includes('telephone')) {
+            res.status(400).json({
+                status: false,
+                message: "Le numéro de téléphone est déjà utilisé. Veuillez en choisir un autre.",
+                data: null,
+            });
+        } else {
+            const errorMessage = (error as Error).message || "Erreur interne du serveur";
+            res.status(500).json({ status: false, message: errorMessage, data: null });
+        }
     }
 };

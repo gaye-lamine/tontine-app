@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import setupSwagger from "./swagger"; 
 import tontineRoute from "./routes/tontineRoutes";
 import authRoute from "./routes/authRoutes";
-
+import cycleRoute from "./routes/cycleRoutes";
 dotenv.config();
 
 const app = express();
@@ -15,8 +15,9 @@ app.use(express.json());
 
 setupSwagger(app);
 
-app.use(tontineRoute);
+app.use('/api',tontineRoute);
 app.use('/auth', authRoute);
+app.use("/api/cycles",cycleRoute)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Welcome to Tontine API");
