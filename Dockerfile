@@ -1,20 +1,34 @@
-# Étape 1 : Utilisation de l'image Node.js
-FROM node:18-alpine
+# Étape 1 : Builder avec TypeScript
+FROM node:18-alpine AS builder
 
-# Étape 2 : Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Étape 3 : Copier package.json et package-lock.json dans le conteneur
 COPY package*.json ./
-
-# Étape 4 : Installer les dépendances
 RUN npm install
 
-# Étape 5 : Copier le reste du projet dans le conteneur
 COPY . .
 
-# Étape 6 : Exposer le port de l'application
+# ✅ Générer le client Prisma
+RUN npx prisma generate
+
+# ✅ Compiler le TypeScript
+RUN npm run build
+
+# Étape 2 : Image de production
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/package*.json ./
+RUN npm install --omit=dev
+
+# ✅ Copier le build TypeScript
+COPY --from=builder /app/dist ./dist
+
+# ✅ Copier les fichiers Prisma générés nécessaires au runtime
+COPY --from=builder /app/node_modules/.prisma /app/node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma /app/node_modules/@prisma
+
 EXPOSE 5000
 
-# Étape 7 : Commande pour démarrer l'application en mode dev avec nodemon
-CMD ["npm", "run", "dev"]
+CMD ["node", "dist/server.js"]
