@@ -1,0 +1,230 @@
+{
+    "info": {
+      "name": "Tontine Management System - Auth, Tontines & Cycles",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "version": "1.0.0"
+    },
+    "item": [
+      {
+        "name": "Authentification",
+        "item": [
+          {
+            "name": "Login (Connexion avec PIN)",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"telephone\": \"+221770000000\",\n  \"pin\": \"1234\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/auth/login",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "auth", "login"]
+              }
+            }
+          },
+          {
+            "name": "Envoyer un OTP",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"telephone\": \"+221770000000\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/auth/login/otp",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "auth", "login", "otp"]
+              }
+            }
+          },
+          {
+            "name": "Vérifier un OTP",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"telephone\": \"+221770000000\",\n  \"code\": \"123456\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/auth/verify/otp",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "auth", "verify", "otp"]
+              }
+            }
+          },
+          {
+            "name": "Inscription",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"telephone\": \"+221770000000\",\n  \"nom\": \"Ndiaye\",\n  \"prenom\": \"Fatou\",\n  \"pin\": \"1234\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/auth/register",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "auth", "register"]
+              }
+            }
+          },
+          {
+            "name": "Vérifier si un numéro existe",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"telephone\": \"+221770000000\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/auth/verify-number",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "auth", "verify-number"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Tontines",
+        "item": [
+          {
+            "name": "Créer une tontine",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" },
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"nom\": \"Tontine Tabaski\",\n  \"description\": \"Préparation Tabaski 2025\",\n  \"montant\": 10000\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/tontines",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "tontines"]
+              }
+            }
+          },
+          {
+            "name": "Lister les tontines",
+            "request": {
+              "method": "GET",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" }
+              ],
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/tontines",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "tontines"]
+              }
+            }
+          },
+          {
+            "name": "Rejoindre une tontine",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" },
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"utilisateurId\": \"2\"\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/tontines/join/1",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "tontines", "join", "1"]
+              }
+            }
+          },
+          {
+            "name": "Cotiser dans une tontine",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" },
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"utilisateurId\": \"1\",\n  \"tontineId\": \"1\",\n  \"cycleId\": \"1\",\n  \"montant\": 10000\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/tontines/cotiser",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "tontines", "cotiser"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Cycles",
+        "item": [
+          {
+            "name": "Créer un cycle",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" },
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"tontineId\": \"1\",\n  \"beneficiaireId\": \"1\",\n  \"ordre\": 1\n}"
+              },
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/cycles/create",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "cycles", "create"]
+              }
+            }
+          },
+          {
+            "name": "Obtenir les cycles d'une tontine",
+            "request": {
+              "method": "GET",
+              "header": [
+                { "key": "Authorization", "value": "Bearer <TOKEN>" }
+              ],
+              "url": {
+                "raw": "https://tontine-app-production-b169.up.railway.app/api/cycles/1",
+                "protocol": "https",
+                "host": ["tontine-app-production-b169", "up", "railway", "app"],
+                "path": ["api", "cycles", "1"]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

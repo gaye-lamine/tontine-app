@@ -35,6 +35,7 @@ export const generateOtp = async (telephone: string) => {
         upperCaseAlphabets: false,
         specialChars: false,
     });
+    
     const otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
 
     const user = await prisma.utilisateur.findUnique({ where: { telephone } });

@@ -32,7 +32,7 @@ const sendOtp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const otp = yield (0, authService_1.generateOtp)(telephone);
         console.log(`Simuler l'envoi de l'OTP: ${otp} à ${telephone}`);
-        res.status(200).json({ status: true, message: "OTP envoyé.", data: null });
+        res.status(200).json({ status: true, message: "OTP envoyé.", data:otp });
     }
     catch (error) {
         const errorMessage = error.message;

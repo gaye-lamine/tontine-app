@@ -28,14 +28,33 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const sendOtp = async (req: Request, res: Response): Promise<void> => {
     const { telephone } = req.body;
+    console.log('[sendOtp] Requête reçue pour le téléphone :', telephone);
+
+    if (!telephone) {
+        res.status(400).json({ status: false, message: "Le numéro de téléphone est requis.", data: null });
+        return;
+    }
 
     try {
         const otp = await generateOtp(telephone);
-        console.log(`Simuler l'envoi de l'OTP: ${otp} à ${telephone}`);
-        res.status(200).json({ status: true, message: "OTP envoyé.", data: null });
+        console.log('[sendOtp] OTP prêt à être envoyé :', otp);
+
+        // Simulation d'envoi (SMS/Email)
+        console.log(`[sendOtp] Simulation : OTP "${otp}" envoyé à ${telephone}`);
+
+        // Réponse explicite avec l'OTP
+        res.status(201).json({ 
+            status: true, 
+            message: "OTP envoyé avec succès.", 
+            data: { otp } // Renvoie l'OTP dans un objet pour plus de clarté
+        });
     } catch (error) {
-        const errorMessage = (error as Error).message;
-        res.status(500).json({ status: false, message: errorMessage, data: null });
+        console.error('[sendOtp] Erreur :', error);
+        res.status(500).json({ 
+            status: false, 
+            message: error instanceof Error ? error.message : "Erreur inconnue", 
+            data: null 
+        });
     }
 };
 
